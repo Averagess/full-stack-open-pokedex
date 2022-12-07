@@ -49,7 +49,7 @@ jobs:
         WITH_V: true
   notify_discord:
     runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ always() && github.event_name == 'push' }}
     needs: [simple_deployment_pipeline]
     steps: 
     - name: Tests Success
