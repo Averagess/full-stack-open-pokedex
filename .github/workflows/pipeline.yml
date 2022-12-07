@@ -38,6 +38,7 @@ jobs:
           details: Master branch received an update, pushed by ${{ github.event.pusher.name }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: notify of failure
+        uses: rjstone/discord-webhook-notify@v1
         if: failure()
         with:
           severity: error
