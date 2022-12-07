@@ -30,6 +30,19 @@ jobs:
           build: npm run build
           start: npm run start-prod
           wait-on: http://localhost:5000
+      - name: notify of success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: Master branch received an update, pushed by ${{ github.event.pusher.name }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: notify of failure
+        if: failure()
+        with:
+          severity: error
+          details: This commit by ${{ github.event.pusher.name }} broke the build!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     if: |
       github.event_name == 'push' &&
@@ -47,22 +60,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-  notify_discord:
-    runs-on: ubuntu-20.04
-    if: ${{ always() && github.event_name == 'push' }}
-    needs: [simple_deployment_pipeline]
-    steps: 
-    - name: Tests Success
-      uses: rjstone/discord-webhook-notify@v1
-      if: success()
-      with:
-        severity: info
-        details: Master branch received an update, pushed by ${{ github.event.pusher.name }}
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-    - name: Test Failure
-      uses: rjstone/discord-webhook-notify@v1
-      if: failure()
-      with:
-        severity: error
-        details: This commit by ${{ github.event.pusher.name }} broke the build!
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
