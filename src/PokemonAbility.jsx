@@ -9,4 +9,6 @@ const PokemonAbility = ({ abilityName }) => (
   </div>
 )
 
+console.log("lool");
+
 export default PokemonAbility
